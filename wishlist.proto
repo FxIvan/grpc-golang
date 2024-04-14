@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package grcp;
+
+message Item {
+    enum ItemPriority{
+        LOW = 0;
+        MEDIUM = 1;
+        HIGH = 2;
+    }
+
+    enum ItemStatus{
+        PENDING = 0;
+        IN_PROGRESS = 1;
+        DONE = 2;
+    }
+
+    string id = 1;
+    string wishListId = 2;
+    string name = 3;
+    string description = 4;
+    string link = 5;
+    string price = 6;
+
+    ItemPriority priority = 7;
+    ItemStatus status = 8;
+}
+
+message Wishlist{
+    enum WishlistStatus{
+        PENDING = 0;
+        IN_PROGRESS = 1;
+        DONE = 2;
+    }
+
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    WishlistStatus status = 4;
+    WishlistStatus itemStatus = 5;
+}
