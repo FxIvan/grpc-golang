@@ -118,9 +118,9 @@ func (s *SchedulerServer) handleScheduleTask(w http.ResponseWriter, r *http.Requ
 		ScheduleAt	int64	`json:"schedule_at"`
 		TaskID		string	`json:"task_id"`	
 	}{
-		Command		commandReq.Command
-		ScheduleAt	commandReq.ScheduledAt
-		TaskID 		taskId
+		Command		commandReq.Command,
+		ScheduleAt	unixTimesTemp.Unix(),
+		TaskID 		taskId,
 	}
 
 	jsonResponse , err := json.Marshal(response)
