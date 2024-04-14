@@ -13,7 +13,7 @@ func ConnectToDatabase(ctx context.Context, dbConnectionString string) (*pgxpool
 	var err error
 	//Hago una variable que acumula el reintento de conexion
 	retryCount := 0
-
+	
 	for retryCount < 5 {
 		dbPool, err = pgxpool.Connect(ctx, dbConnectionString)
 		if err == nil {
@@ -27,7 +27,7 @@ func ConnectToDatabase(ctx context.Context, dbConnectionString string) (*pgxpool
 	if err != nil {
 		log.Printf("Ran out of retries to connect to database (5)")
 	}
-
+	//En caso de conexion correcto le devolvemos la conexion
 	log.Printf("Connect to the database.")
 	return dbPool, nil
 
