@@ -75,10 +75,31 @@ func (s *SchedulerServer) Start() error {
 // Funcion de interrupcion para detener el servidor de manera segura
 // Es una señal SIGTERM
 func (s *SchedulerServer) awaitShutdown() error {
-	//
+	//Creamos un canal con el fin de captar el cierre de sesion
 	stop := make(chan os.Signal, 1)
+	//Configuramos el canal stop cuando capte una interrupcion como por ejemplo CTRL + C y SIGTERM para que termine el proceso limpiamente
+	//stop es el canal de notififaciones que esperamos del sistema y las otra dos opciones son las señales que esperamos
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+	//Esperamos a la señal que sera a traves del canal stop, que puede ser Interrupt o SIGTERM
 	<-stop
-
+	//Se ejecuta esto una vez que llegue la señal de stop
 	return s.Stop()
 }
+
+func (s *SchedulerServer) Stop() error{
+	//Cerramos conexion de la DB
+	s.dbPool.Close()
+	if s.httpServer != nil{
+		//Para dar una espera de 10 segundo para que se complete la operaciones antes de cerrar los proceso
+		//En caso de que no se completase las operaciones, entonces se cancelaran y le diran al cliente que la operacion ah sido cancelada
+		ctx , cancel := context.WithTimeout(context.Background() ,10*time.Second)
+		//Este se ejecuto despues del return, por que defer indicare que se ejecute a los ultimo de todo
+		defer cancel()
+		//Cerramos la conexion del servidor
+		return s.httpServer.Shutdown(ctx)
+	}
+	log.Println("Scheduler server and database pool stopped")
+	return nil
+}
+
+
